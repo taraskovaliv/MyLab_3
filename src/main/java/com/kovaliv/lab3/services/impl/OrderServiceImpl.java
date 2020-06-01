@@ -7,6 +7,10 @@ import com.kovaliv.lab3.dtos.PaidOrderDto;
 import com.kovaliv.lab3.entities.Order;
 import com.kovaliv.lab3.entities.enums.PaidStatus;
 import com.kovaliv.lab3.repos.OrderRepo;
+import com.kovaliv.lab3.security.entities.Role;
+import com.kovaliv.lab3.security.entities.User;
+import com.kovaliv.lab3.security.repository.RoleRepository;
+import com.kovaliv.lab3.security.repository.UserRepository;
 import com.kovaliv.lab3.security.services.UserService;
 import com.kovaliv.lab3.services.OrderService;
 import com.kovaliv.lab3.services.ProductService;
@@ -15,7 +19,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +31,8 @@ public class OrderServiceImpl implements OrderService {
     private final ModelMapper modelMapper;
     private final UserService userService;
     private final ProductService productService;
+    private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
     @Override
     public List<OrderDto> getAll(String username) {
@@ -52,13 +60,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public OrderDto paidOrder(PaidOrderDto paidOrderDto) {
+    public OrderDto paidOrder(PaidOrderDto paidOrderDto, String username) {
         Order order = orderRepo.getOne(paidOrderDto.getOrderId());
 
         paid(paidOrderDto);
 
         order.setPaidStatus(PaidStatus.PAID);
         order = orderRepo.save(order);
+
+        checkToRemoveFromBlackList(username);
 
         return modelMapper.map(order, OrderDto.class);
     }
@@ -68,5 +78,23 @@ public class OrderServiceImpl implements OrderService {
         if (cardNumber.length() != 8) {
             throw new BadCredentialsException(ErrorConstants.CARDNUMBER_NOT_CORRECT);
         }
+    }
+
+    private void checkToRemoveFromBlackList(String username) {
+        User user = userService.findByUsername(username);
+        if (isInBlackList(user) && isAllOrderPaid(user)) {
+            Set<Role> roles = new HashSet<>();
+            roles.add(roleRepository.findByName("user"));
+            user.setRoles(roles);
+            userRepository.save(user);
+        }
+    }
+
+    private boolean isAllOrderPaid(User user) {
+        return user.getOrders().stream().noneMatch(order -> order.getPaidStatus() == PaidStatus.NOT_PAID);
+    }
+
+    private boolean isInBlackList(User user) {
+        return user.getRoles().stream().anyMatch(role -> role.getName().equals("black_list_user"));
     }
 }

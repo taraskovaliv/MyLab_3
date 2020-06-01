@@ -11,6 +11,6 @@ public interface OrderService {
 
     OrderDto addOrder(AddOrderDto addOrderDto, String username);
 
-    OrderDto paidOrder(PaidOrderDto paidOrderDto);
+    OrderDto paidOrder(PaidOrderDto paidOrderDto, String username);
 
 }
