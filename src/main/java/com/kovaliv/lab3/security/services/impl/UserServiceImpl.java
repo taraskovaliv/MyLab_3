@@ -88,6 +88,11 @@ public class UserServiceImpl implements UserService {
             throw new RuntimeException(ErrorConstants.USER_HAVE_NO_NOT_PAID_ORDERS);
         }
 
+        Set<Role> roles = new HashSet<>();
+        roles.add(roleRepository.findByName("black_list_user"));
+        user.setRoles(roles);
+        userRepository.save(user);
+
         return "Successfully blacklisted user " + user.getUsername();
     }
 
