@@ -55,7 +55,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/deleteProduct/**",
                         "/addToBlackList"
                 )
-                .hasAuthority("admin");
+                .hasAuthority("admin")
+                .antMatchers(
+                        "/addOrder"
+                )
+                .hasAuthority("user")
+                .antMatchers(
+                        "/getOrders",
+                        "/paidOrder"
+                )
+                .hasAnyAuthority("black_list_user", "user")
+
+        ;
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
     }

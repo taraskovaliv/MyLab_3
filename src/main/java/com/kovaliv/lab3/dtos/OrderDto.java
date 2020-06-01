@@ -1,6 +1,7 @@
 package com.kovaliv.lab3.dtos;
 
 import com.kovaliv.lab3.entities.enums.PaidStatus;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,8 +11,11 @@ import java.util.List;
 
 @Getter
 @Setter
+@Builder
 public class OrderDto {
     private Long id;
+
+    private Double price;
 
     @Enumerated(EnumType.STRING)
     private PaidStatus paidStatus;
