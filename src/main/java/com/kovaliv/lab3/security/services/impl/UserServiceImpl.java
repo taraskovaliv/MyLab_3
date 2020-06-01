@@ -2,12 +2,21 @@ package com.kovaliv.lab3.security.services.impl;
 
 import com.kovaliv.lab3.constants.ErrorConstants;
 import com.kovaliv.lab3.security.dtos.AddUserRequestDto;
+import com.kovaliv.lab3.security.dtos.LoginDto;
+import com.kovaliv.lab3.security.dtos.UserDto;
 import com.kovaliv.lab3.security.entities.Role;
 import com.kovaliv.lab3.security.entities.User;
+import com.kovaliv.lab3.security.jwt.JwtUtils;
 import com.kovaliv.lab3.security.repository.RoleRepository;
 import com.kovaliv.lab3.security.repository.UserRepository;
 import com.kovaliv.lab3.security.services.UserService;
 import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,22 +27,31 @@ import java.util.Set;
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
+    private final JwtUtils jwtUtils;
+    private final ModelMapper modelMapper;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
 
     @Override
-    public User save(AddUserRequestDto addUserRequestDto) {
-        Set<Role> roles = new HashSet<>();
-        roles.add(roleRepository.findByName("user"));
+    public UserDto save(AddUserRequestDto addUserRequestDto) {
+        try {
+            findByUsername(addUserRequestDto.getUsername());
+        } catch (UsernameNotFoundException e) {
 
-        User user = User.builder()
-                .password(passwordEncoder.encode(addUserRequestDto.getPassword()))
-                .username(addUserRequestDto.getUsername())
-                .roles(roles)
-                .build();
+            Set<Role> roles = new HashSet<>();
+            roles.add(roleRepository.findByName("user"));
 
-        return userRepository.save(user);
+            User user = User.builder()
+                    .password(passwordEncoder.encode(addUserRequestDto.getPassword()))
+                    .username(addUserRequestDto.getUsername())
+                    .roles(roles)
+                    .build();
+
+            return modelMapper.map(userRepository.save(user), UserDto.class);
+        }
+        throw new BadCredentialsException(ErrorConstants.USERNAME_IS_ALREADY_USED);
     }
 
     @Override
@@ -41,4 +59,24 @@ public class UserServiceImpl implements UserService {
         return userRepository.findByUsername(username).orElseThrow(
                 () -> new UsernameNotFoundException(ErrorConstants.USER_NOT_FOUND_BY_USERNAME + username));
     }
+
+    @Override
+    public UserDto authenticateUser(LoginDto loginDto) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
+
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        return UserDto.builder()
+                .token(jwt)
+                .id(userDetails.getId())
+                .username(userDetails.getUsername())
+                .password(userDetails.getPassword())
+                .build();
+    }
+
+
 }
