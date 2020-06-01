@@ -32,7 +32,7 @@ public class OrderController {
     }
 
     @PutMapping("/paidOrder")
-    public ResponseEntity<OrderDto> paidOrder(@RequestBody PaidOrderDto paidOrderDto) {
-        return ResponseEntity.ok(orderService.paidOrder(paidOrderDto));
+    public ResponseEntity<OrderDto> paidOrder(@RequestBody PaidOrderDto paidOrderDto, Principal principal) {
+        return ResponseEntity.ok(orderService.paidOrder(paidOrderDto, principal.getName()));
     }
 }
