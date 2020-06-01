@@ -5,8 +5,10 @@ import com.kovaliv.lab3.dtos.AddOrderDto;
 import com.kovaliv.lab3.dtos.OrderDto;
 import com.kovaliv.lab3.dtos.PaidOrderDto;
 import com.kovaliv.lab3.entities.Order;
+import com.kovaliv.lab3.entities.Product;
 import com.kovaliv.lab3.entities.enums.PaidStatus;
 import com.kovaliv.lab3.repos.OrderRepo;
+import com.kovaliv.lab3.repos.ProductRepo;
 import com.kovaliv.lab3.security.entities.Role;
 import com.kovaliv.lab3.security.entities.User;
 import com.kovaliv.lab3.security.repository.RoleRepository;
@@ -19,6 +21,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +33,7 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepo orderRepo;
     private final ModelMapper modelMapper;
     private final UserService userService;
+    private final ProductRepo productRepo;
     private final ProductService productService;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
@@ -47,16 +51,27 @@ public class OrderServiceImpl implements OrderService {
         Order order = Order.builder()
                 .paidStatus(PaidStatus.NOT_PAID)
                 .user(userService.findByUsername(username))
-                .products(addOrderDto.getProductIds()
-                        .stream()
-                        .map(productService::findById)
-                        .collect(Collectors.toList())
-                )
+                .products(getProducts(addOrderDto.getProductIds()))
                 .build();
 
         order = orderRepo.save(order);
 
         return modelMapper.map(order, OrderDto.class);
+    }
+
+    private List<Product> getProducts(List<Long> ids) {
+        List<Product> products = new ArrayList<>();
+        for (Long id : ids) {
+            Product product = productService.findById(id);
+
+            if (product.getQuantity() == 0) {
+                throw new RuntimeException(ErrorConstants.PRODUCT_IS_EMPTY + id);
+            }
+
+            product.setQuantity(product.getQuantity() - 1);
+            products.add(productRepo.save(product));
+        }
+        return products;
     }
 
     @Override
