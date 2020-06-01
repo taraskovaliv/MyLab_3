@@ -1,6 +1,8 @@
 package com.kovaliv.lab3.security.services.impl;
 
 import com.kovaliv.lab3.constants.ErrorConstants;
+import com.kovaliv.lab3.dtos.AddUserToBlackListDto;
+import com.kovaliv.lab3.entities.enums.PaidStatus;
 import com.kovaliv.lab3.security.dtos.AddUserRequestDto;
 import com.kovaliv.lab3.security.dtos.LoginDto;
 import com.kovaliv.lab3.security.dtos.UserDto;
@@ -78,5 +80,27 @@ public class UserServiceImpl implements UserService {
                 .build();
     }
 
+    @Override
+    public String addToBlackList(AddUserToBlackListDto addUserToBlackListDto) {
+        User user = findByUsername(addUserToBlackListDto.getUsername());
 
+        if (!hasNotPaidOrders(user)) {
+            throw new RuntimeException(ErrorConstants.USER_HAVE_NO_NOT_PAID_ORDERS);
+        }
+
+        Set<Role> roles = new HashSet<>();
+        roles.add(roleRepository.findByName("black_list_user"));
+        user.setRoles(roles);
+        userRepository.save(user);
+
+        return "Successfully blacklisted user " + user.getUsername();
+    }
+
+    private boolean hasNotPaidOrders(User user) {
+        if (user.getOrders()
+                .stream().noneMatch(order -> order.getPaidStatus() == PaidStatus.NOT_PAID)) {
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
 }

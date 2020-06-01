@@ -29,22 +29,32 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .cors()
+                .cors()
                 .and()
-            .csrf()
+                .csrf()
                 .disable()
                 .exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()
-            .sessionManagement()
+                .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-            .authorizeRequests()
-                .antMatchers("/auth/**")
+                .authorizeRequests()
+                .antMatchers(
+                        "/auth/**"
+                )
                 .permitAll()
-            .antMatchers("/", "/getProducts")
+                .antMatchers(
+                        "/",
+                        "/getProducts"
+                )
                 .hasAnyAuthority("user", "admin")
-            .antMatchers("/addProduct", "/addQuantity", "/deleteProduct/**")
+                .antMatchers(
+                        "/addProduct",
+                        "/addQuantity",
+                        "/deleteProduct/**",
+                        "/addToBlackList"
+                )
                 .hasAuthority("admin");
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
