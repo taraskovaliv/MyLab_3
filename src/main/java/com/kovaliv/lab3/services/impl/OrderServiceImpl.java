@@ -90,7 +90,7 @@ public class OrderServiceImpl implements OrderService {
 
     private void paid(PaidOrderDto paidOrderDto) {
         String cardNumber = paidOrderDto.getCardNumber().toString();
-        if (cardNumber.length() != 8) {
+        if (cardNumber.length() != 16) {
             throw new BadCredentialsException(ErrorConstants.CARDNUMBER_NOT_CORRECT);
         }
     }

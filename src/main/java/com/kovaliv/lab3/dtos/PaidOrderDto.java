@@ -12,7 +12,7 @@ public class PaidOrderDto {
     @Min(1)
     private Long orderId;
 
-    private Integer cardNumber;
+    private Long cardNumber;
 
     @Length(min = 100, max = 999)
     private Integer cvv;

@@ -2,9 +2,7 @@ package com.kovaliv.lab3.entities;
 
 import com.kovaliv.lab3.entities.enums.PaidStatus;
 import com.kovaliv.lab3.security.entities.User;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,6 +12,8 @@ import java.util.List;
 @Setter
 @Builder
 @Table(name = "orders")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
