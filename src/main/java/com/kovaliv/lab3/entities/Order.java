@@ -2,6 +2,7 @@ package com.kovaliv.lab3.entities;
 
 import com.kovaliv.lab3.entities.enums.PaidStatus;
 import com.kovaliv.lab3.security.entities.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
 @Table(name = "orders")
 public class Order {
     @Id
