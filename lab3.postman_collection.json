@@ -1,0 +1,202 @@
+{
+  "info": {
+    "_postman_id": "15f21afb-a0cb-4d35-8328-b151c69e3956",
+    "name": "lab3",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\t\"username\" : \"taras\", \n\t\"password\" : \"1904taras\",\n\t\"passwordConfirm\" : \"1904taras\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/auth/signup",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "auth",
+            "signup"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\t\"username\" : \"taras\", \n\t\"password\" : \"1904taras\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/auth/signin",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "auth",
+            "signin"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get products",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0YXJhcyIsImlhdCI6MTU5MDk5MzUwNywiZXhwIjoxNTkxOTkzNTA3fQ.YG1EwD8wQ7Dx5rC_wvR8lJ7nn1hC0dSPJRy5gm9xle8-jAOQyyxWRBt2udYLCTZyCPcy4wbkyHI3C3qTSrarBQ",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/getProducts",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "getProducts"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Add order",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0YXJhcyIsImlhdCI6MTU5MDk5MzUwNywiZXhwIjoxNTkxOTkzNTA3fQ.YG1EwD8wQ7Dx5rC_wvR8lJ7nn1hC0dSPJRy5gm9xle8-jAOQyyxWRBt2udYLCTZyCPcy4wbkyHI3C3qTSrarBQ",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\t\"productIds\" : [0, 1, 1]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/addOrder",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "addOrder"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "paidOrder",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0YXJhcyIsImlhdCI6MTU5MDk5MzUwNywiZXhwIjoxNTkxOTkzNTA3fQ.YG1EwD8wQ7Dx5rC_wvR8lJ7nn1hC0dSPJRy5gm9xle8-jAOQyyxWRBt2udYLCTZyCPcy4wbkyHI3C3qTSrarBQ",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n\t\"orderId\" : 2,\n\t\"cardNumber\" : 1234567812345678,\n\t\"cvv\" : 123\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/paidOrder",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "paidOrder"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "get Orders",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0YXJhcyIsImlhdCI6MTU5MDk5MzUwNywiZXhwIjoxNTkxOTkzNTA3fQ.YG1EwD8wQ7Dx5rC_wvR8lJ7nn1hC0dSPJRy5gm9xle8-jAOQyyxWRBt2udYLCTZyCPcy4wbkyHI3C3qTSrarBQ",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/getOrders",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "getOrders"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "protocolProfileBehavior": {}
+}
