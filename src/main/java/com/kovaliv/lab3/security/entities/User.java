@@ -1,9 +1,11 @@
 package com.kovaliv.lab3.security.entities;
 
+import com.kovaliv.lab3.entities.Order;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,6 +24,9 @@ public class User {
     private String username;
 
     private String password;
+
+    @OneToMany(mappedBy = "user")
+    private List<Order> orders;
 
     @ManyToMany
     private Set<Role> roles;
