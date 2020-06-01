@@ -36,15 +36,21 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .authenticationEntryPoint(unauthorizedHandler)
                 .and()
-            .sessionManagement()
+                .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-            .authorizeRequests()
+                .authorizeRequests()
                 .antMatchers("/auth/**")
                 .permitAll()
-            .antMatchers("/", "/getProducts")
+                .antMatchers(
+                        "/",
+                        "/getProducts")
                 .hasAnyAuthority("user", "admin")
-            .antMatchers("/addProduct", "/addQuantity", "/deleteProduct/**")
+                .antMatchers(
+                        "/addProduct",
+                        "/addQuantity",
+                        "/deleteProduct/**",
+                        "/addToBlackList")
                 .hasAuthority("admin");
 
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
